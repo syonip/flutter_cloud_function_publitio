@@ -3,7 +3,10 @@ import 'package:flutter_cloud_function_publitio/models/video_info.dart';
 
 class FirebaseProvider {
   static saveVideo(VideoInfo video) async {
-    await Firestore.instance.collection('videos').document().setData({
+    await Firestore.instance
+        .collection('videos')
+        .document(video.videoName)
+        .setData({
       'videoUrl': video.videoUrl,
       'thumbUrl': video.thumbUrl,
       'coverUrl': video.coverUrl,

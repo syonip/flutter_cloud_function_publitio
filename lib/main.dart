@@ -70,12 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<String> _uploadFile(filePath, folderName) async {
+  Future<String> _uploadFile(filePath, fileName) async {
     final file = new File(filePath);
-    final basename = p.basename(filePath);
 
-    final StorageReference ref =
-        FirebaseStorage.instance.ref().child(folderName).child(basename);
+    final StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = ref.putFile(file);
     uploadTask.events.listen(_onUploadProgress);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
