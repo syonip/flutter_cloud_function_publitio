@@ -1,0 +1,12 @@
+{
+  "name": "tests",
+  "description": "Cloud Functions for Firebase",
+  "engines": {
+    "node": "8"
+  },
+  "dependencies": {
+    "firebase-admin": "^8.10.0",
+    "publitio_js_sdk": "^1.1.1"
+  },
+  "private": true
+}
