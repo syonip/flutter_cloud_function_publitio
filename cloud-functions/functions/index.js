@@ -12,9 +12,15 @@ exports.uploadNewVideo = functions.firestore
         const bucket = admin.storage().bucket()
         const videoFile = bucket.file(context.params.videoId)
         const stream = videoFile.createReadStream();
-        console.log(videoFile.name)
+        console.log(`uploading video file: ${videoFile.name}`)
 
-        publitio.uploadFile(stream, 'file')
-            .then(data => { console.log(data) })
-            .catch(error => { console.log(error) })
+        try {
+            const data = await publitio.uploadFile(stream, 'file')
+            console.log('Uploading success. data:')
+            console.log(data)
+        }
+        catch (error) {
+            console.error('Uploading error')
+            console.error(error)
+        }
     });

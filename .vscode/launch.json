@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Publitio cloud function test",
+            "program": "${workspaceFolder}/cloud-functions/tests/index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Flutter",
             "program": "lib/main.dart",
             "request": "launch",
