@@ -23,7 +23,8 @@ async function runUpload() {
     }
 
     const bucket = admin.storage().bucket()
-    const videoFile = bucket.file(context.params.videoId)
+    const fileName = '${context.params.videoId}.mp4';
+    const videoFile = bucket.file(fileName)
     const fileStream = videoFile.createReadStream();
     console.log(new Date().toString())
     console.log(`uploading video file: ${videoFile.name}`)
@@ -56,44 +57,47 @@ async function runUploadRemote() {
 
     const context = {
         params: {
-            videoId: 'video1558'
+            videoId: 'video4191'
         }
     }
 
     const bucket = admin.storage().bucket()
-    const videoFile = bucket.file(context.params.videoId)
+    const fileName = `${context.params.videoId}.mp4`;
+    const videoFile = bucket.file(fileName)
     const downloadUrlArr = await videoFile.getSignedUrl({
         action: 'read',
         expires: '03-17-2025'
     });
-    // const downloadUrl = downloadUrlArr[0]
-    // const downloadUrl = 'https://publit.io/images/publitio_logo_white_pure_s.png'
-    const downloadUrl = 'https://firebasestorage.googleapis.com/v0/b/imagesdemo-a95c2.appspot.com/o/video7816?alt=media&token=a3916f0b-53bd-4990-8d18-e8f9e6fe2162'
+    const downloadUrl = downloadUrlArr[0]
     console.log(new Date().toString())
-    console.log(`uploading video file: ${downloadUrl}`)
-
+    var data;
     try {
-        const data = await publitio.uploadRemoteFile({file_url: downloadUrl})
-
+        // const data = await publitio.uploadFile(stream, 'file')
+        data = await publitio.uploadRemoteFile({ file_url: downloadUrl })
         console.log(new Date().toString())
-        console.log('Uploading success. data:')
-        console.log(data)
 
-        if (data.code == 201) {
-            admin.firestore().collection("videos").doc(videoFile.name).set({
-                finishedProcessing: true,
-                videoUrl: data.url_download,
-                thumbUrl: data.url_thumbnail,
-                aspectRatio: data.width / data.height,
-                publitioId: data.id,
-            }, { merge: true });
-        }
+        console.log(`Uploading finished. status code: ${data.code}`)
     }
     catch (error) {
-        console.log(new Date().toString())
         console.error('Uploading error')
         console.error(error)
     }
+
+    if (data.code == 201) {
+        console.log(`Setting data in firestore doc: ${context.params.videoId} with publitioID: ${data.id}`)
+        await admin.firestore().collection("videos").doc(context.params.videoId).set({
+            finishedProcessing: true,
+            videoUrl: data.url_download,
+            thumbUrl: data.url_thumbnail,
+            aspectRatio: data.width / data.height,
+            publitioId: data.id,
+        }, { merge: true });
+    }
+
+    // Delete the source file if you want
+    console.log('Deleting source file')
+    bucket.file(context.params.videoId).delete()
+    console.log('Done')
 }
 
 async function runDelete() {
@@ -117,6 +121,6 @@ async function runDelete() {
 }
 
 
-runUpload();
-// runUploadRemote();
+// runUpload();
+runUploadRemote();
 // runDelete();

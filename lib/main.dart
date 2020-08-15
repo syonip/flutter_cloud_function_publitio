@@ -73,8 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = ref.putFile(file);
     uploadTask.events.listen(_onUploadProgress);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    await taskSnapshot.ref.getDownloadURL();
+    await uploadTask.onComplete;
   }
 
   String getFileExtension(String fileName) {
@@ -90,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _processPhase = 'Uploading video to firebase storage';
       _progress = 0.0;
     });
-    await _uploadFile(rawVideoFile.path, videoName);
+    await _uploadFile(rawVideoFile.path, '$videoName.mp4');
     setState(() {
       _processPhase = 'Saving video metadata to cloud firestore';
       _progress = 0.0;
@@ -148,6 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
           final video = _videos[index];
           return GestureDetector(
             onTap: () {
+              if (!video.finishedProcessing) return;
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
