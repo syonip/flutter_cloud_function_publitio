@@ -70,15 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<String> _uploadFile(filePath, fileName) async {
+  _uploadFile(filePath, fileName) async {
     final file = new File(filePath);
 
     final StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = ref.putFile(file);
     uploadTask.events.listen(_onUploadProgress);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String videoUrl = await taskSnapshot.ref.getDownloadURL();
-    return videoUrl;
+    await taskSnapshot.ref.getDownloadURL();
   }
 
   String getFileExtension(String fileName) {
@@ -119,24 +118,15 @@ class _MyHomePageState extends State<MyHomePage> {
       _processPhase = 'Uploading video to firebase storage';
       _progress = 0.0;
     });
-    final videoUrl = await _uploadFile(rawVideoFile.path, videoName);
+    await _uploadFile(rawVideoFile.path, videoName);
     // final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
-
-    final videoInfo = VideoInfo(
-      videoUrl: videoUrl,
-      // thumbUrl: thumbUrl,
-      // coverUrl: thumbUrl,
-      // aspectRatio: aspectRatio,
-      uploadedAt: DateTime.now().millisecondsSinceEpoch,
-      videoName: videoName,
-    );
 
     setState(() {
       _processPhase = 'Saving video metadata to cloud firestore';
       _progress = 0.0;
     });
 
-    await FirebaseProvider.saveVideo(videoInfo);
+    await FirebaseProvider.saveVideo(videoName);
 
     setState(() {
       _processPhase = '';
@@ -206,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: new EdgeInsets.all(10.0),
                 child: Stack(
                   children: <Widget>[
-                    Row(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         if (video.thumbUrl != null)
@@ -227,23 +217,27 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ],
                           ),
-                        Expanded(
-                          child: Container(
-                            margin: new EdgeInsets.only(left: 20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Text("${video.videoName}"),
-                                Container(
-                                  margin: new EdgeInsets.only(top: 12.0),
-                                  child: Text(
-                                      'Uploaded ${timeago.format(new DateTime.fromMillisecondsSinceEpoch(video.uploadedAt))}'),
-                                ),
-                              ],
-                            ),
+                        if (!video.finishedProcessing)
+                          Container(
+                            margin: new EdgeInsets.only(top: 12.0),
+                            child: Text('Processing...'),
                           ),
+                        SizedBox(
+                          height: 20,
                         ),
+                        // Expanded(
+                        //   child: Container(
+                        //     margin: new EdgeInsets.only(left: 20.0),
+                        //     child: Column(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        // mainAxisSize: MainAxisSize.max,
+                        // children: <Widget>[
+                        Text("${video.videoName}"),
+
+                        //   ],
+                        // ),
+                        //       ),
+                        //     ),
                       ],
                     ),
                   ],

@@ -5,9 +5,11 @@ class VideoInfo {
   double aspectRatio;
   int uploadedAt;
   String videoName;
+  bool finishedProcessing;
 
   VideoInfo(
       {this.videoUrl,
+      this.finishedProcessing,
       this.thumbUrl,
       this.coverUrl,
       this.aspectRatio,

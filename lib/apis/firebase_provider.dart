@@ -2,17 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_cloud_function_publitio/models/video_info.dart';
 
 class FirebaseProvider {
-  static saveVideo(VideoInfo video) async {
-    await Firestore.instance
-        .collection('videos')
-        .document(video.videoName)
-        .setData({
-      'videoUrl': video.videoUrl,
-      'thumbUrl': video.thumbUrl,
-      'coverUrl': video.coverUrl,
-      'aspectRatio': video.aspectRatio,
-      'uploadedAt': video.uploadedAt,
-      'videoName': video.videoName,
+  static saveVideo(String videoName) async {
+    await Firestore.instance.collection('videos').document(videoName).setData({
+      'finishedProcessing': false,
+      'videoName': videoName,
     });
   }
 
@@ -32,6 +25,7 @@ class FirebaseProvider {
         aspectRatio: ds.data['aspectRatio'],
         videoName: ds.data['videoName'],
         uploadedAt: ds.data['uploadedAt'],
+        finishedProcessing: ds.data['finishedProcessing'] == true,
       );
     }).toList();
   }
