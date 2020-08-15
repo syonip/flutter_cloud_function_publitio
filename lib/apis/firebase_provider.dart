@@ -9,6 +9,10 @@ class FirebaseProvider {
     });
   }
 
+  static deleteVideo(String videoName) async {
+    await Firestore.instance.collection('videos').document(videoName).delete();
+  }
+
   static listenToVideos(callback) async {
     Firestore.instance.collection('videos').snapshots().listen((qs) {
       final videos = mapQueryToVideoInfo(qs);

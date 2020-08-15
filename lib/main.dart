@@ -4,13 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'apis/firebase_provider.dart';
-import 'package:path/path.dart' as p;
 import 'models/video_info.dart';
 import 'widgets/player.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 void main() => runApp(MyApp());
 
@@ -88,39 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _processVideo(File rawVideoFile) async {
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
-    // final Directory extDir = await getApplicationDocumentsDirectory();
-    // final outDirPath = '${extDir.path}/Videos/$videoName';
-    // final videosDir = new Directory(outDirPath);
-    // videosDir.createSync(recursive: true);
-
-    // final rawVideoPath = rawVideoFile.path;
-    // final info = await EncodingProvider.getMediaInformation(rawVideoPath);
-    // final aspectRatio = EncodingProvider.getAspectRatio(info);
-
-    // setState(() {
-    //   _processPhase = 'Generating thumbnail';
-    //   _videoDuration = EncodingProvider.getDuration(info);
-    //   _progress = 0.0;
-    // });
-
-    // final thumbFilePath =
-    //     await EncodingProvider.getThumb(rawVideoPath, thumbWidth, thumbHeight);
-
-    // setState(() {
-    //   _processPhase = 'Encoding video';
-    //   _progress = 0.0;
-    // });
-
-    // final encodedFilesDir =
-    //     await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
 
     setState(() {
       _processPhase = 'Uploading video to firebase storage';
       _progress = 0.0;
     });
     await _uploadFile(rawVideoFile.path, videoName);
-    // final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
-
     setState(() {
       _processPhase = 'Saving video metadata to cloud firestore';
       _progress = 0.0;
@@ -150,10 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
         maxDuration: Duration(minutes: 1),
       );
 
-      if (pickedFile == null) return;
-
-      videoFile = File(pickedFile.path);
       _imagePickerActive = false;
+      if (pickedFile != null) videoFile = File(pickedFile.path);
 
       if (videoFile == null) return;
     }
@@ -197,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Stack(
                   children: <Widget>[
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         if (video.thumbUrl != null)
                           Stack(
@@ -225,19 +193,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         SizedBox(
                           height: 20,
                         ),
-                        // Expanded(
-                        //   child: Container(
-                        //     margin: new EdgeInsets.only(left: 20.0),
-                        //     child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        // mainAxisSize: MainAxisSize.max,
-                        // children: <Widget>[
-                        Text("${video.videoName}"),
-
-                        //   ],
-                        // ),
-                        //       ),
-                        //     ),
+                        Row(
+                          children: <Widget>[
+                            Text("${video.videoName}"),
+                            Spacer(),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                FirebaseProvider.deleteVideo(video.videoName);
+                              },
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ],
