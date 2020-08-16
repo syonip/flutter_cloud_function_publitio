@@ -14,6 +14,8 @@ const PublitioAPI = require('publitio_js_sdk').default
 const publitioCredentials = require('../functions/publitio_credentials.json')
 const publitio = new PublitioAPI(publitioCredentials.key, publitioCredentials.secret)
 
+
+
 async function runUpload() {
 
     const context = {
@@ -57,23 +59,25 @@ async function runUploadRemote() {
 
     const context = {
         params: {
-            videoId: 'video4191'
+            videoId: 'video5578'
         }
     }
 
     const bucket = admin.storage().bucket()
-    const fileName = `${context.params.videoId}.mp4`;
+    const fileName = `${context.params.videoId}.mp4`
     const videoFile = bucket.file(fileName)
+    var expires = new Date()
+    expires.setTime(expires.getTime() + (60 * 60 * 1000))
     const downloadUrlArr = await videoFile.getSignedUrl({
         action: 'read',
-        expires: '03-17-2025'
-    });
+        expires: expires
+    })
     const downloadUrl = downloadUrlArr[0]
     console.log(new Date().toString())
     var data;
     try {
         // const data = await publitio.uploadFile(stream, 'file')
-        data = await publitio.uploadRemoteFile({ file_url: downloadUrl })
+        data = await publitio.uploadRemoteFile({ file_url: downloadUrl, privacy: 0, option_hls: 1 })
         console.log(new Date().toString())
 
         console.log(`Uploading finished. status code: ${data.code}`)
@@ -92,12 +96,15 @@ async function runUploadRemote() {
             aspectRatio: data.width / data.height,
             publitioId: data.id,
         }, { merge: true });
+        // Delete the source file if you want
+        console.log('Deleting source file')
+        await bucket.file(context.params.videoId).delete()
+        console.log('Done')
+    } else {
+        console.log('Upload status unsuccessful. Data:')
+        console.log(data)
     }
 
-    // Delete the source file if you want
-    console.log('Deleting source file')
-    bucket.file(context.params.videoId).delete()
-    console.log('Done')
 }
 
 async function runDelete() {

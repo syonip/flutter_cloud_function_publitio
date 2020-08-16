@@ -106,24 +106,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _takeVideo() async {
     var videoFile;
-    if (_debugMode) {
-      videoFile = File(
-          '/storage/emulated/0/Android/data/com.learningsomethingnew.fluttervideo.flutter_video_sharing/files/Pictures/ebbafabc-dcbe-433b-93dd-80e7777ee4704451355941378265171.mp4');
-    } else {
-      if (_imagePickerActive) return;
 
-      _imagePickerActive = true;
-      final pickedFile = await picker.getVideo(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.rear,
-        maxDuration: Duration(minutes: 1),
-      );
+    if (_imagePickerActive) return;
 
-      _imagePickerActive = false;
-      if (pickedFile != null) videoFile = File(pickedFile.path);
+    _imagePickerActive = true;
+    final pickedFile = await picker.getVideo(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.rear,
+      maxDuration: Duration(minutes: 1),
+    );
 
-      if (videoFile == null) return;
-    }
+    _imagePickerActive = false;
+    if (pickedFile != null) videoFile = File(pickedFile.path);
+
+    if (videoFile == null) return;
+
     setState(() {
       _processing = true;
     });
