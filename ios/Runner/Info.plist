@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Need access to camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Need access to mic</string>
 </dict>
 </plist>
