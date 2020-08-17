@@ -5,8 +5,10 @@
     "node": "8"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "firebase-admin": "^8.10.0",
-    "publitio_js_sdk": "^1.1.1"
+    "publitio_js_sdk": "^1.1.1",
+    "query-string": "^6.13.1"
   },
   "private": true
 }
