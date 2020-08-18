@@ -1,10 +1,10 @@
-# Serverless video upload with Firebase Storage, Cloud Functions and Publitio
+# Serverless video upload and encoding with Firebase Storage, Cloud Functions and Publitio
 
 ![final.gif](https://www.learningsomethingnew.com/flutter-video-hls/final.gif)
 
 An example app to demonstrate video sharing using Firebase Cloud Storage, using Cloud Functions to upload to [Publitio API](https://publit.io?fpr=jonathan43) for transcoding and hosting.
 
-Full tutorial: ***medium link***
+Full tutorial on [medium](https://medium.com/@syonip/serverless-video-upload-and-encoding-with-firebase-storage-cloud-functions-and-publitio-a4b2997b1508)
 
 ## Getting Started
 
