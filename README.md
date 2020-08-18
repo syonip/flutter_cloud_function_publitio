@@ -1,16 +1,34 @@
-# flutter_cloud_function_publitio
+# Serverless video upload with Firebase Storage, Cloud Functions and Publitio
 
-A new Flutter project.
+![final.gif](https://www.learningsomethingnew.com/flutter-video-hls/final.gif)
+
+An example app to demonstrate video sharing using Firebase Cloud Storage, using Cloud Functions to upload to [Publitio API](https://publit.io?fpr=jonathan43) for transcoding and hosting.
+
+Full tutorial: ***medium link***
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+You need to setup Firebase credentials in order to run the sample:
 
-A few resources to get you started if this is your first Flutter project:
+### Publitio setup
+1. Create a free account at [Publit.io](https://publit.io?fpr=jonathan43), and get your credentials from the dashboard.
+2. Put your API key and secret in `/cloud-functions/functions/publitio_credentials.json`
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Firebase setup
+Complete the setup process as described [here](https://firebase.google.com/docs/flutter/setup).
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+You should add two files:
+- Android: `android/app/google-services.json`
+- iOS: `ios/Runner/GoogleService-Info.plist`
+
+Then from the `cloud-functions` dir run:
+
+```sh
+firebase login
+firebase deploy
+```
+
+This will deploy the cloud functions.
+
+### Run the project
+Run the project as usual using `flutter run`
